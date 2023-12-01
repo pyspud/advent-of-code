@@ -1,10 +1,4 @@
-///usr/bin/env jbang "$0" "$@" ; exit $?
-
-// The newly-improved calibration document consists of lines of text; each line originally contained a specific calibration value that the Elves now need to recover.
-// On each line, the calibration value can be found by combining the first digit and the last digit (in that order) to form a single two-digit number.
-
-// For example:
-
+package advent.of.code;
 // 1abc2
 // pqr3stu8vwx
 // a1b2c3d4e5f
@@ -20,14 +14,18 @@ import java.nio.file.Path;
 public class Day1 {
 
     public static void main(String... args) throws IOException {
-        var inputFile = Path.of("input2.txt");
+        var inputFile = Path.of("input.txt");
+        System.out.println("Using inputFile = "+inputFile.toAbsolutePath());
+        System.out.println(processFile(inputFile)); 
+    }
+
+    static int processFile(Path inputFile) throws IOException {
         try (var lines = Files.lines(inputFile)) {
-            var result = lines.map(Day1::calibrationDigits)
+            return lines.map(Day1::calibrationDigits)
                     // .peek(System.out::println)
                     .mapToInt(Digits::value)
                     .sum();
-            System.out.println(result);
-        } 
+        }
     }
 
 
@@ -63,6 +61,9 @@ public class Day1 {
     // 7pqrstsixteen
 
     static char numberAtStart(String line) {
+        if(line.isEmpty()){
+            return 0;
+        }
         var firstChar = line.charAt(0);
         if (Character.isDigit(firstChar)) {
             return firstChar;

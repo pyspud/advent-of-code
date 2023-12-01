@@ -8,6 +8,8 @@
         "treb",
         "uchet",
         "xtwone",
+        "zeroeight",
         "zoneight"
-    ]
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
