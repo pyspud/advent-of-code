@@ -24,10 +24,10 @@ dependencies {
 
 }
 
-// application {
-//     // Define the main class for the application.
-//     mainClass = 'advent.of.code.App'
-// }
+application {
+    // Define the main class for the application.
+    mainClass = 'advent.of.code.Day2'
+}
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
