@@ -19,6 +19,7 @@ public class Day2 {
     // followed by a semicolon-separated list of subsets of cubes that were revealed from the bag (like 3 red, 5 green, 4 blue).
 
     sealed interface Cube {
+        int number();
         record Red(int number) implements Cube{}
         record Blue(int number) implements Cube{}
         record Green(int number) implements Cube {}
@@ -68,6 +69,30 @@ public class Day2 {
             var num = part[0].substring("Game ".length());
             return new Game(Integer.parseInt(num), gameList(part[1]));
         }
+
+        Set<Cube> minimumSet() {
+            int maxRed = 0;
+            int maxBlue = 0;
+            int maxGreen = 0;
+            for (var game : games) {
+                for (var cube : game) {
+                    if (cube instanceof Cube.Red(var n) && n > maxRed) {
+                        maxRed = n;
+                    }
+                    if (cube instanceof Cube.Blue(var n) && n > maxBlue) {
+                        maxBlue = n;
+                    }
+                    if (cube instanceof Cube.Green(var n) && n > maxGreen) {
+                        maxGreen = n;
+                    }
+                }
+            }
+            return Set.of(new Cube.Red(maxRed), new Cube.Blue(maxBlue), new Cube.Green(maxGreen));
+        }
+        
+        int power() {
+            return minimumSet().stream().mapToInt(Cube::number).reduce(1,(x,y)->x*y);
+        }
     }
 
     static Stream<Game> processFile(Path inputFile) throws IOException {
@@ -100,14 +125,22 @@ public class Day2 {
     static List<Integer> validGameIds(Stream<Game> input) {
         return input.filter(Day2::ifPossible).map(Game::id).toList();
     }
+
     static int sumGameIds(Stream<Game> input) {
         return input.filter(Day2::ifPossible).mapToInt(Game::id).sum();
+    }
+    
+    static int sumOfPowers(Stream<Game> input) {
+        return input.mapToInt(Game::power).sum();
     }
 
     public static void main(String... args) throws IOException {
         var inputFile = Path.of("input.txt");
-        System.out.println("Using inputFile = "+inputFile.toAbsolutePath());
-        var sumOfGameIds = sumGameIds(processFile(inputFile)); 
-        System.out.println(sumOfGameIds); 
+        System.out.println("Using inputFile = " + inputFile.toAbsolutePath());
+        //Part 1
+        // var result = sumGameIds(processFile(inputFile)); 
+        //Part 2
+        var result = sumOfPowers(processFile(inputFile)); 
+        System.out.println(result); 
     }
 }
