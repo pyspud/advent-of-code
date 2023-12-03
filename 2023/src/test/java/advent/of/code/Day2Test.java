@@ -104,7 +104,7 @@ class Day2Test {
 
     @Test
     void shouldProcessFile() throws URISyntaxException, IOException {
-        var input = Path.of(Day1Test.class.getResource("/Day2/test.txt").toURI());
+        var input = Path.of(Day2Test.class.getResource("/Day2/test.txt").toURI());
         assertThat(Day2.processFile(input)).containsAnyOf(
                 new Game(9, List.of( Set.of(new Green(1)))),
                 new Game(10, List.of( Set.of(new Red(2),new Blue(3)) )),
@@ -123,13 +123,13 @@ class Day2Test {
     @Test
     void validIdsPart1ShouldBe() throws URISyntaxException, IOException {
         var expected = List.of(1, 2, 5);
-        var input = Path.of(Day1Test.class.getResource("/Day2/input1.txt").toURI());
+        var input = Path.of(Day2Test.class.getResource("/Day2/input1.txt").toURI());
         var actual = Day2.validGameIds(Day2.processFile(input));
         assertThat(actual).isEqualTo(expected);
     }
     @Test
     void totalPart1ShouldBe() throws URISyntaxException, IOException {
-        var input = Path.of(Day1Test.class.getResource("/Day2/input1.txt").toURI());
+        var input = Path.of(Day2Test.class.getResource("/Day2/input1.txt").toURI());
         var actual = Day2.sumGameIds(Day2.processFile(input));
         assertThat(actual).isEqualTo(8);
     }
@@ -169,7 +169,7 @@ class Day2Test {
     
     @Test
     void totalPart2ShouldBe() throws URISyntaxException, IOException {
-        var input = Path.of(Day1Test.class.getResource("/Day2/input1.txt").toURI());
+        var input = Path.of(Day2Test.class.getResource("/Day2/input1.txt").toURI());
         var actual = Day2.sumOfPowers(Day2.processFile(input));
         assertThat(actual).isEqualTo(2286);
     }

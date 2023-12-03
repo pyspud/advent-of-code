@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class Day3 {
@@ -13,18 +15,29 @@ public class Day3 {
     // If you can add up all the part numbers in the engine schematic, it should be easy to work out which part is missing.
     record Coord(int line, int start) {}
     record SchematicNumber(Coord position, int length, int value) {
+
         Set<Coord> neighbourCoords() {
-            Set<Coord> neighbours = HashSet.newHashSet(6+2*length);
+            Set<Coord> neighbours = HashSet.newHashSet(6 + 2 * length);
             // Coords beside
-            neighbours.add(new Coord(position.line(), position.start()-1));
-            neighbours.add(new Coord(position.line(), position.start()+length));
+            neighbours.add(new Coord(position.line(), position.start() - 1));
+            neighbours.add(new Coord(position.line(), position.start() + length));
             for (int i = -1; i <= length; i++) {
                 // Coords above
-                neighbours.add(new Coord(position.line()-1, position.start()+i));
+                neighbours.add(new Coord(position.line() - 1, position.start() + i));
                 // Coords below
-                neighbours.add(new Coord(position.line()+1, position.start()+i));
+                neighbours.add(new Coord(position.line() + 1, position.start() + i));
             }
             return neighbours;
+        }
+        
+        Coord possibleRatio(List<Coord> possibleGears) {
+            var neighbours = neighbourCoords();
+            for (Coord coord : possibleGears) {
+                if (neighbours.contains(coord)) {
+                    return coord;
+                }
+            }
+            return null;
         }
     }
     // The engine schematic (your puzzle input) consists of a visual representation of the engine.
@@ -34,6 +47,10 @@ public class Day3 {
     // (Periods (.) do not count as a symbol.)
     static boolean isSymbol(char c) {
         return !(c == '.' || Character.isLetterOrDigit(c));
+    }
+
+    static boolean isGear(char c) {
+        return c=='*';
     }
     // Here is an example engine schematic:
 
@@ -105,27 +122,78 @@ public class Day3 {
         return numbers;
     }
     
+    static List<Coord> possibleGearsInEngine(List<String> engine) {
+        List<Coord> gears = new ArrayList<>();
+        for (var l = 0; l < engine.size(); l++) {
+            var line = engine.get(l);
+            for (var c = 0; c < line.length(); c++) {
+                if (isGear(line.charAt(c))) {
+                    gears.add(new Coord(l, c));
+                }
+            }
+        }
+        return gears;
+    }
+    
+    
     static int sumSchematicNumbers(List<SchematicNumber> numbers) {
         return numbers.stream()
                 .mapToInt(SchematicNumber::value)
                 .sum();
     }
 
-    static int processFile(Path inputFile) throws IOException {
+    static int sumOfPartNumbersInFile(Path inputFile) throws IOException {
         var engine = Files.readAllLines(inputFile);
         var allNumbers = Day3.allNumbersIn(engine);
         var partNumbers = allNumbers.stream().filter(n -> Day3.isPartNumber(engine, n)).toList();
         return sumSchematicNumbers(partNumbers);
     }
 
+
+    static Map<SchematicNumber, Coord> possibleRatios(List<SchematicNumber> numbers, List<Coord> gears) {
+        Map<SchematicNumber, Coord> ratios = HashMap.newHashMap(gears.size() * 2);
+        for (var number : numbers) {
+            var gear = number.possibleRatio(gears);
+            if (gear != null) {
+                ratios.put(number, gear);
+            }
+        }
+        return ratios;
+    }
+    
+    static int sumOfGearRatiosInFile(Path inputFile) throws IOException {
+        var engine = Files.readAllLines(inputFile);
+        var allNumbers = Day3.allNumbersIn(engine);
+        var possibleGears = Day3.possibleGearsInEngine(engine);
+        var possibleRatiosNumbers = Day3.possibleRatios(allNumbers, possibleGears);
+        
+        var sum = 0;
+        var numberList = possibleRatiosNumbers.keySet().stream().toList();
+        for (int i = 0; i < numberList.size(); i++) {
+            var number1 = numberList.get(i);
+            var gear1 = possibleRatiosNumbers.get(number1);
+
+            for (int j = i+1; j < numberList.size(); j++) {
+                var number2 = numberList.get(j);
+                var gear2 = possibleRatiosNumbers.get(number2);
+
+                if (gear1.equals(gear2)) {
+                    sum = sum + (number1.value() * number2.value());
+                }
+                
+            }
+        }
+        return sum;
+    }
+
     public static void main(String... args) throws IOException {
         var inputFile = Path.of("input.txt");
         System.out.println("Using inputFile = " + inputFile.toAbsolutePath());
         //Part 1
-        var result1 = processFile(inputFile); 
+        var result1 = sumOfPartNumbersInFile(inputFile); 
         System.out.println("Part 1 = "+result1); 
-        // //Part 2
-        // var result2 = sumOfPowers(processFile(inputFile)); 
-        // System.out.println("Part 2 = "+result2); 
+        //Part 2
+        var result2 = sumOfGearRatiosInFile(inputFile); 
+        System.out.println("Part 2 = "+result2); 
     }
 }

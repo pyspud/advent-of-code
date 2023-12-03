@@ -5,6 +5,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
@@ -98,7 +99,7 @@ class Day3Test {
     static final List<String> SCHEMATIC_ENGINE = List.of(
             ".....",
             ".....",
-            "..$..",
+            "..*..",
             ".....",
             ".....");
 
@@ -167,10 +168,85 @@ class Day3Test {
     // Every other number is adjacent to a symbol and so is a part number; their sum is 4361.
 
     @Test
-    void inputShouldMatch() throws URISyntaxException, IOException {
-        var inputFile = Path.of(Day1Test.class.getResource("/Day3/input1.txt").toURI());
-        var sum = Day3.processFile(inputFile);
+    void inputShouldMatchPart1() throws URISyntaxException, IOException {
+        var inputFile = Path.of(Day3Test.class.getResource("/Day3/input1.txt").toURI());
+        var sum = Day3.sumOfPartNumbersInFile(inputFile);
         assertThat(sum).isEqualTo(4361);
     }
     // Of course, the actual engine schematic is much larger. What is the sum of all of the part numbers in the engine schematic?
+    
+    
+    // Part 2
+    // The missing part wasn't the only issue - one of the gears in the engine is wrong. 
+    // A gear is any * symbol that is adjacent to exactly two part numbers. 
+    // Its gear ratio is the result of multiplying those two numbers together.
+    
+    // This time, you need to find the gear ratio of every gear and add them all up so that the engineer can figure out which gear needs to be replaced.
+    @Test
+    void shouldGetCoordsOfPossibleGears() {
+        var gears = Day3.possibleGearsInEngine(SCHEMATIC_ENGINE);
+        assertThat(gears).contains(new Coord(2, 2));
+    }
+    @Test
+    void shouldGetCoordsOfGearsInInput() throws URISyntaxException, IOException {
+        var inputFile = Path.of(Day3Test.class.getResource("/Day3/input1.txt").toURI());
+        var engine = Files.readAllLines(inputFile);
+        var actualGears = Day3.possibleGearsInEngine(engine);
+        assertThat(actualGears).containsExactly(new Coord(1, 3),new Coord(4, 3),new Coord(8, 5));
+    }
+    // Consider the same engine schematic again:
+    
+    // 467..114..
+    // ...*......
+    // ..35..633.
+    // ......#...
+    // 617*......
+    // .....+.58.
+    // ..592.....
+    // ......755.
+    // ...$.*....
+    // .664.598..
+
+    // In this schematic, there are two gears. 
+    // The first is in the top left; it has part numbers 467 and 35, so its gear ratio is 16345. 
+    // The second gear is in the lower right; its gear ratio is 451490. 
+    // (The * adjacent to 617 is not a gear because it is only adjacent to one part number.) 
+    // Adding up all of the gear ratios produces 467835.
+
+    @Test
+    void shouldFindPossibleRatioNumber() {
+        var expected = new Coord(1, 1);
+        var gears = List.of(expected);
+        var number = new SchematicNumber(new Coord(0, 0), 1, 1);
+
+        assertThat(number.possibleRatio(gears)).isEqualTo(expected);
+    }
+    @Test
+    void shouldFindPossibleRatioNumbers() throws IOException, URISyntaxException {
+        // 467, 35; 617; 755,598
+        var inputFile = Path.of(Day3Test.class.getResource("/Day3/input1.txt").toURI());
+        var engine = Files.readAllLines(inputFile);
+
+        var allNumbers = Day3.allNumbersIn(engine);
+        var possibleGears = Day3.possibleGearsInEngine(engine);
+
+        var possibleRatios = Day3.possibleRatios(allNumbers,possibleGears);
+        assertThat(possibleRatios).hasSize(5);
+    }
+    // @Test
+    // void shouldFindActualGears() throws IOException, URISyntaxException {
+    //     var inputFile = Path.of(Day3Test.class.getResource("/Day3/input1.txt").toURI());
+    //     var engine = Files.readAllLines(inputFile);
+    //     var actualGears = Day3.findGears(engine);
+    //     assertThat(actualGears).containsExactly(new Coord(1, 3),new Coord(8, 5));
+    // }
+    
+    @Test
+    void inputShouldMatchPart2() throws URISyntaxException, IOException {
+        var inputFile = Path.of(Day3Test.class.getResource("/Day3/input1.txt").toURI());
+        var sum = Day3.sumOfGearRatiosInFile(inputFile);
+        assertThat(sum).isEqualTo(467835);
+    }
+    
+    // What is the sum of all of the gear ratios in your engine schematic?
 }
