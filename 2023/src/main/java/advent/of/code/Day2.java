@@ -138,9 +138,10 @@ public class Day2 {
         var inputFile = Path.of("input.txt");
         System.out.println("Using inputFile = " + inputFile.toAbsolutePath());
         //Part 1
-        // var result = sumGameIds(processFile(inputFile)); 
+        var result1 = sumGameIds(processFile(inputFile)); 
+        System.out.println("Part 1 = "+result1); 
         //Part 2
-        var result = sumOfPowers(processFile(inputFile)); 
-        System.out.println(result); 
+        var result2 = sumOfPowers(processFile(inputFile)); 
+        System.out.println("Part 2 = "+result2); 
     }
 }
