@@ -3,8 +3,10 @@ package advent.of.code;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import advent.of.code.days.four.ScratchCard;
 
@@ -28,10 +30,27 @@ public class Day4 {
             return matchingNumbers.mapToInt(Day4::score).sum();
         }
     }
+
     static int part2(Path inputFile) throws IOException {
-        try (var lines = Files.lines(inputFile)) {
-            return (int)lines.count();
+        var lines = Files.readAllLines(inputFile);
+
+        int[] cardCounts = getCardCounts(lines);
+        return Arrays.stream(cardCounts).sum();
+    }
+
+    static int[] getCardCounts(List<String> lines) {
+        int[] cardCounts = IntStream.range(0, lines.size()).toArray();
+        Arrays.fill(cardCounts, 1);
+
+        for (int original = 0; original < lines.size(); original++) {
+            var card = ScratchCard.of(lines.get(original));
+            var numberOfMatches = card.matchingNumbers();
+
+            for (int copy = 1; copy <= numberOfMatches.size(); copy++) {
+                cardCounts[original+copy]=cardCounts[original+copy]+cardCounts[original];
+            }
         }
+        return cardCounts;
     }
 
     public static void main(String... args) throws IOException {
