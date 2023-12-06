@@ -21,9 +21,18 @@ public class Day5 {
             .min().orElse(0);
     }
 
-    static int part2(Almanac almanac) {
-        //
-        return 0;
+    static long part2(Almanac almanac) {
+        return almanac.seedRanges().stream()
+            .flatMapToLong(s->s.stream())
+            .map(almanac::seedToSoil)
+            .map(almanac::soilToFertilizer)
+            .map(almanac::fertilizerToWater)
+            .map(almanac::waterToLight)
+            .map(almanac::lightToTemperature)
+            .map(almanac::temperatureToHumidity)
+            .map(almanac::humidityToLocation)
+            .map(n->n)
+            .min().orElse(0);
     }
 
     public static void main(String... args) throws IOException {

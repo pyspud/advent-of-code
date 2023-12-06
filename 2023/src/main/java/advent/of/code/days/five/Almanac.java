@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.LongStream;
+import java.util.stream.IntStream;
 
 public class Almanac {
     long[] seeds;
@@ -90,7 +92,7 @@ public class Almanac {
         }
 
         public Optional<Long> destinationInRange(Long location) {
-            var diff = location.longValue()-source;
+            var diff = location.longValue() - source;
             if (diff >= 0l && diff < length) {
                 return Optional.of(Long.valueOf(destination + diff));
             }
@@ -98,10 +100,23 @@ public class Almanac {
         }
     }
     
+    public record SeedRange(long seed, long length) {
+        public LongStream stream() {
+            return LongStream.range(seed, seed+length);
+        }
+    }
+
     public long[] seeds() {
         return seeds;
     }
 
+    public List<SeedRange> seedRanges() {
+        List<SeedRange> seedRanges = new ArrayList<>();
+        for (int i = 0; i < seeds.length; i+=2) {
+            seedRanges.add(new SeedRange(seeds[i], seeds[i + 1]));
+        }
+        return seedRanges;
+    }
 
     public long seedToSoil(long source) {
         return find(seedToSoil, source);
