@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.LongStream;
-import java.util.stream.IntStream;
 
 public class Almanac {
     long[] seeds;
