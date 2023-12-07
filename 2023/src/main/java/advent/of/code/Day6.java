@@ -17,8 +17,9 @@ public class Day6 {
                 .reduce(1, (a, b) -> a * b);
     }
 
-    static long part2(ToyBoats competition) {
-        return 0L;
+    static long part2(List<String> lines) {
+        var race = ToyBoats.singleRace(lines);
+        return race.newRecords().size();
     }
 
     public static void main(String... args) throws IOException {
@@ -31,7 +32,7 @@ public class Day6 {
         var result1 = part1(competition); 
         System.out.println("Part 1 = "+result1); 
         //Part 2
-        var result2 = part2(competition); 
+        var result2 = part2(lines); 
         System.out.println("Part 2 = "+result2); 
     }
 }

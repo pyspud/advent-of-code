@@ -113,9 +113,20 @@ class Day6Test {
         assertThat(actual).hasSize(9);
     }
 
-    // To see how much margin of error you have, determine the number of ways you can beat the record in each race;
-    //  in this example, if you multiply these values together, you get 288 (4 * 8 * 9).
+    // Part 2
+    //So, the example from before:
 
-    // Determine the number of ways you could beat the record in each race.
-    // What do you get if you multiply these numbers together?
+    // Time:      7  15   30
+    // Distance:  9  40  200
+    // ...now instead means this:
+
+    // Time:      71530
+    // Distance:  940200
+
+    @Test
+    void shouldGetSingleRace() {
+        var expected = new Race(71530, 940200);
+        var actual = ToyBoats.singleRace(INPUT);
+        assertThat(actual).isEqualTo(expected);
+    }
 }

@@ -3,15 +3,15 @@ package advent.of.code.days.six;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 public class ToyBoats {
     
     private List<Race> races;
 
     
-    public record Race(int duration, int recordDistance) {
-        public int distanceTravelled(int buttonHold)
+    public record Race(long duration, long recordDistance) {
+        public long distanceTravelled(long buttonHold)
         {
             if (buttonHold < 1 || buttonHold >= duration) {
                 return 0;
@@ -20,8 +20,8 @@ public class ToyBoats {
             return buttonHold * remainingTime;
         }
         
-        public List<Integer> newRecords() {
-            return IntStream.range(1, duration)
+        public List<Long> newRecords() {
+            return LongStream.range(1, duration)
                     .map(this::distanceTravelled)
                     .filter(t->t>recordDistance)
                     .boxed()
@@ -48,5 +48,17 @@ public class ToyBoats {
     
     public List<Race> races() {
         return races;
+    }
+
+    public static Race singleRace(List<String> lines) {
+        var time = lines.get(0)
+                .substring(9)
+                .strip()
+                .replace(" ","");
+        var distance = lines.get(1)
+                .substring(9)
+                .strip()
+                .replace(" ", "");
+        return new Race(Long.parseLong(time), Long.parseLong(distance));
     }
 }
