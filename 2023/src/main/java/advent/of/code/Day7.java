@@ -17,9 +17,13 @@ public class Day7 {
         return Hand.score(game);
     }
 
-    static int part2(List<String> lines) {
-        // TODO
-        return 0;
+    static long part2(List<String> hands) {
+        var deal = hands.stream()
+                .map(Hand::parseWithJoker)
+                .toList();
+
+        var game = Hand.sort(deal);
+        return Hand.score(game);
 }
 
     public static void main(String... args) throws IOException {

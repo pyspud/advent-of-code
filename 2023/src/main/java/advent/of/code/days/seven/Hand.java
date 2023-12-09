@@ -9,7 +9,14 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 
-public record Hand(List<Card> cards, Type type ,int bid) implements Comparable<Hand> {
+public record Hand(List<Card> cards, Type type, int bid, Rule rule) implements Comparable<Hand> {
+    
+    public Hand(List<Card> cards, Type type, int bid) {
+        this(cards, type, bid, Rule.STANDARD);
+    }
+    enum Rule {
+        STANDARD, JOKER;
+    }
     
     public enum Type {
         HIGH_CARD,
@@ -21,50 +28,73 @@ public record Hand(List<Card> cards, Type type ,int bid) implements Comparable<H
         FIVE_OF_A_KIND;
         
         static Type of(String s) {
+            return of(s, Rule.STANDARD);
+        }
+
+        static Type of(String s,Rule rule) {
             Map<Character, Integer> frequencies = s.chars()
-            .mapToObj(c -> (char) c).collect(
-                Collectors.groupingBy(c -> c,
-                Collectors.collectingAndThen(
-                    Collectors.counting(), Long::intValue)));
-            
-            if (frequencies.size() == 1) {
+                    .mapToObj(c -> (char) c)
+                    .collect(Collectors.groupingBy(
+                        c -> c,Collectors.collectingAndThen(
+                                    Collectors.counting(), Long::intValue)));
+            var jokers = 0;
+            if (rule == Rule.JOKER && frequencies.containsKey(Character.valueOf('J'))) {
+                jokers = frequencies.get(Character.valueOf('J'));
+            }
+            if (frequencies.containsValue(Integer.valueOf(5))) {
                 // All same
                 return FIVE_OF_A_KIND;
-            }
-            if (frequencies.size() == 5) {
-                // All different
-                return HIGH_CARD;
-            }
-            if (frequencies.size()==4){
-                return ONE_PAIR;
-            }
-            if (frequencies.size() == 2) {
-                // Can be 4 of a kind or full house
-                for (var entry : frequencies.entrySet()) {
-                    if (entry.getValue().equals(Integer.valueOf(4))) {
-                        return FOUR_OF_A_KIND;
-                    }
+            } else if (frequencies.containsValue(Integer.valueOf(4))) {
+                if (jokers == 1 || jokers == 4) {
+                    return FIVE_OF_A_KIND;
                 }
-                return FULL_HOUSE;
-            }
-            // Size of 3 could be 2 pair or 3 of a kind
-            for (var entry : frequencies.entrySet()) {
-                if (entry.getValue().equals(Integer.valueOf(3))) {
+                return FOUR_OF_A_KIND;
+            } else if (frequencies.containsValue(Integer.valueOf(3))){
+                if (frequencies.size() == 2 && jokers >= 2) {
+                    return FIVE_OF_A_KIND;
+                } else if(frequencies.size() == 3 && jokers==1) {
+                    return FOUR_OF_A_KIND;
+                } else if(frequencies.size() == 2 && jokers==0) {
+                    return FULL_HOUSE;
+                }
+                return THREE_OF_A_KIND;
+            } else if(frequencies.containsValue(Integer.valueOf(2))){
+                if (frequencies.size() == 4 && jokers == 2) {
+                    return THREE_OF_A_KIND;
+                } else if (frequencies.size() == 3 && jokers == 2) {
+                    return FOUR_OF_A_KIND;
+                } else if (frequencies.size() == 3 && jokers == 1) {
+                    return FULL_HOUSE;
+                } else if(frequencies.size() == 3 && jokers == 0) {
+                    return TWO_PAIR;
+                } else if (frequencies.size() == 4 && jokers == 1) {
                     return THREE_OF_A_KIND;
                 }
+                return ONE_PAIR;
+            } else if (jokers == 1) {
+                return ONE_PAIR;
             }
-            return TWO_PAIR;
+            return HIGH_CARD;
         }
     }
 
     public static Hand of(String cardString, int bid) {
         List<Card> cards = IntStream.range(0, 5).mapToObj(n -> Card.of(cardString.charAt(n))).toList();
-        return new Hand(cards, Type.of(cardString), bid);
+        return new Hand(cards, Type.of(cardString), bid, Rule.STANDARD);
+    }
+
+    public static Hand withJoker(String cardString, int bid) {
+        List<Card> cards = IntStream.range(0, 5).mapToObj(n -> Card.of(cardString.charAt(n))).toList();
+        return new Hand(cards, Type.of(cardString,Rule.JOKER), bid, Rule.JOKER);
     }
 
     public static Hand parse(String line) {
         var parts = line.split(" ");
         return of(parts[0], Integer.parseInt(parts[1]));
+    }
+    public static Hand parseWithJoker(String line) {
+        var parts = line.split(" ");
+        return withJoker(parts[0], Integer.parseInt(parts[1]));
     }
 
 
@@ -79,9 +109,18 @@ public record Hand(List<Card> cards, Type type ,int bid) implements Comparable<H
         // Second Ordering is Card
         var other = o.cards();
         for (int i = 0; i < other.size(); i++) {
-            var cardCompare = cards.get(i).compareTo(other.get(i));
-            if (cardCompare != 0) {
-                return cardCompare;
+            var thisCard = cards.get(i);
+            var otherCard = other.get(i);
+            if (rule == Rule.JOKER && thisCard != Card.J && otherCard == Card.J) {
+                return 1;
+            }
+            else if (rule == Rule.JOKER && thisCard == Card.J && otherCard != Card.J) {
+                return -1;
+            } else {
+                var cardCompare = thisCard.compareTo(otherCard);
+                if (cardCompare != 0) {
+                    return cardCompare;
+                }
             }
         }
         // Same
