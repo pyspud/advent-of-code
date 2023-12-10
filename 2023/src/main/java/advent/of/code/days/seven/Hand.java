@@ -31,6 +31,7 @@ public record Hand(List<Card> cards, Type type, int bid, Rule rule) implements C
             return of(s, Rule.STANDARD);
         }
 
+        @SuppressWarnings("java:S3776")
         static Type of(String s,Rule rule) {
             Map<Character, Integer> frequencies = s.chars()
                     .mapToObj(c -> (char) c)
