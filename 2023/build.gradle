@@ -26,7 +26,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'advent.of.code.Day8'
+    mainClass = 'advent.of.code.Day9'
 }
 java {
     toolchain {
