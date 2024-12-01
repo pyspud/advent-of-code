@@ -5,3 +5,4 @@ plugins {
 
 rootProject.name = 'advent-of-code'
 include('2023')
+include('2024')

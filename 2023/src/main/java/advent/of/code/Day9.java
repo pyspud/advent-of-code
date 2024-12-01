@@ -3,7 +3,6 @@ package advent.of.code;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -41,7 +40,6 @@ public class Day9 {
             var diffs= IntStream.range(0, value.values.length - 1)
                     .mapToLong(i -> value.values[i + 1] - value.values[i])
                     .toArray();
-            // System.out.println(Arrays.toString(diffs));
             return new Oasis(diffs);
         }
     }
