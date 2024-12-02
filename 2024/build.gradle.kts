@@ -21,16 +21,6 @@ testing {
                 implementation.bundle(libs.bundles.junit)
             }
             useJUnitJupiter()
-            // targets{
-            //     all {
-            //         testTask.configure {
-            //             testLogging {
-            //                 events("FAILED")
-            //                 // exceptionFormat = TestExceptionFormat.FULL
-            //             }
-            //         }
-            //     }
-            // }
         }
     }
 }
