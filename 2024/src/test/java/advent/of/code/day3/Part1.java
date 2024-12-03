@@ -22,8 +22,8 @@ class Part1 {
     @ParameterizedTest
     @FieldSource("VALID")
     void shouldParseInstruction(String instruction, Long value) {
-        var actual = Multiple.of(instruction);
-        assertThat(actual).returns(value, Multiple::result);
+        var actual = Multiply.of(instruction);
+        assertThat(actual).returns(value, Multiply::result);
     }
 
     static final List<String> INVALID = List.of("mul(4*", "mul(6,9!", "?(12,34)", "mul ( 2 , 4 )");
@@ -40,7 +40,7 @@ class Part1 {
     @Test
     void shouldFindResultOFInstructions() {
         var computer = new MemorySegment(EXAMPLE_INPUT);
-        var actual = computer.getInstructions().map(Multiple::of).mapToLong(Multiple::result).sum();
+        var actual = computer.getInstructions().map(Multiply::of).mapToLong(Multiply::result).sum();
 
         assertThat(actual).isEqualTo(161);
     }
@@ -51,8 +51,8 @@ class Part1 {
         try (var lines = Utils.inputLines("/advent/of/code/day3/inputPart1.txt")) {
             var result = lines.map(MemorySegment::new)
                     .flatMap(MemorySegment::getInstructions)
-                    .map(Multiple::of)
-                    .mapToLong(Multiple::result)
+                    .map(Multiply::of)
+                    .mapToLong(Multiply::result)
                     .sum();
 
             assertThat(result).isEqualTo(165225049L);

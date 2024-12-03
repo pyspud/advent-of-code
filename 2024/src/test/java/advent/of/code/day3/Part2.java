@@ -23,7 +23,7 @@ class Part2 {
     @Test
     void shouldFindResultOfEnabledInstructions() {
         var computer = new ConditionalMemory();
-        var actual = computer.process(EXAMPLE_INPUT).map(Multiple::of).mapToLong(Multiple::result).sum();
+        var actual = computer.process(EXAMPLE_INPUT).map(Multiply::of).mapToLong(Multiply::result).sum();
 
         assertThat(actual).isEqualTo(48);
     }
@@ -34,8 +34,8 @@ class Part2 {
         try (var lines = Utils.inputLines("/advent/of/code/day3/inputPart1.txt")) {
             var memory = new ConditionalMemory(lines);
             var result = memory.getInstructions()
-                    .map(Multiple::of)
-                    .mapToLong(Multiple::result)
+                    .map(Multiply::of)
+                    .mapToLong(Multiply::result)
                     .sum();
 
             assertThat(result).isEqualTo(108830766L);

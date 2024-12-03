@@ -1,6 +1,7 @@
 package advent.of.code.day3;
 
-import java.util.ArrayList;
+import java.util.Optional;
+import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -22,18 +23,21 @@ public class ConditionalMemory {
     }
 
     Stream<String> process(String line) {
-        var matches = FORMAT.matcher(line);
-        var actual = new ArrayList<String>();
-        while (matches.find()) {
-            var instruction = matches.group();
-            if ("do()".equals(instruction)) {
-                this.enabled = true;
-            } else if ("don't()".equals(instruction)) {
-                this.enabled = false;
-            } else if (enabled) {
-                actual.add(instruction);
-            }
+        return FORMAT.matcher(line)
+                .results()
+                .map(MatchResult::group)
+                .map(this::findMultiply)
+                .flatMap(Optional::stream);
+    }
+
+    private Optional<String> findMultiply(String instruction) {
+        if ("do()".equals(instruction)) {
+            this.enabled = true;
+        } else if ("don't()".equals(instruction)) {
+            this.enabled = false;
+        } else if (enabled) {
+            return Optional.of(instruction);
         }
-        return actual.stream();
+        return Optional.empty();
     }
 }
