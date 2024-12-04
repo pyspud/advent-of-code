@@ -11,46 +11,36 @@ record WordSearch(List<String> puzzle) {
         return puzzle.get(0).length();
     }
 
-    long foundXmas(int l, int c) {
-        long result = 0l;
-        if (isLetterAt('X', l, c)) {
-            // E
-            if (isLetterAt('M', l, c + 1) && isLetterAt('A', l, c + 2) && isLetterAt('S', l, c + 3))
-                result++;
-            // SE
-            if (isLetterAt('M', l + 1, c + 1) && isLetterAt('A', l + 2, c + 2) && isLetterAt('S', l + 3, c + 3))
-                result++;
-            // S
-            if (isLetterAt('M', l + 1, c) && isLetterAt('A', l + 2, c) && isLetterAt('S', l + 3, c))
-                result++;
-            // SW
-            if (isLetterAt('M', l + 1, c - 1) && isLetterAt('A', l + 2, c - 2) && isLetterAt('S', l + 3, c - 3))
-                result++;
-            // W
-            if (isLetterAt('M', l, c - 1) && isLetterAt('A', l, c - 2) && isLetterAt('S', l, c - 3))
-                result++;
-            // NW
-            if (isLetterAt('M', l - 1, c - 1) && isLetterAt('A', l - 2, c - 2) && isLetterAt('S', l - 3, c - 3))
-                result++;
-            // N
-            if (isLetterAt('M', l - 1, c) && isLetterAt('A', l - 2, c) && isLetterAt('S', l - 3, c))
-                result++;
-            // NE
-            if (isLetterAt('M', l - 1, c + 1) && isLetterAt('A', l - 2, c + 2) && isLetterAt('S', l - 3, c + 3))
-                result++;
-        }
-        return result;
-    }
-
-    boolean isLetterAt(char letter, int l, int c) {
-        if (validCoord(l, c)) {
-            return puzzle.get(l).charAt(c) == letter;
-        }
-        return false;
-    }
-
     boolean validCoord(int l, int c) {
         return (0 <= l && l < lines()) && (0 <= c && c < chars());
+    }
+
+    char letterAt(int l, int c) {
+        if (validCoord(l, c)) {
+            return puzzle.get(l).charAt(c);
+        }
+        return ' ';
+    }
+
+    String wordInDirection(int l, int c, int lDelta, int cDelta) {
+        StringBuffer temp = new StringBuffer(4);
+        for (int i = 0; i < 4; i++) {
+            temp.append(letterAt(l + (i * lDelta), c + (i * cDelta)));
+        }
+        return temp.toString();
+    }
+
+    long foundXmas(int l, int c) {
+        long result = 0l;
+        if (letterAt(l, c) == 'X') {
+            for (int lDelta = -1; lDelta <= 1; lDelta++) {
+                for (int cDelta = -1; cDelta <= 1; cDelta++) {
+                    if("XMAS".equals(wordInDirection(l, c, lDelta, cDelta)))
+                        result++;
+                }
+            }
+        }
+        return result;
     }
 
     long countXmas() {
