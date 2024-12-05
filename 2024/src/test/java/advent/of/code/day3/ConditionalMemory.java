@@ -30,13 +30,13 @@ public class ConditionalMemory {
                 .flatMap(Optional::stream);
     }
 
+    @SuppressWarnings("java:S108")
     private Optional<String> findMultiply(String instruction) {
-        if ("do()".equals(instruction)) {
-            this.enabled = true;
-        } else if ("don't()".equals(instruction)) {
-            this.enabled = false;
-        } else if (enabled) {
-            return Optional.of(instruction);
+        switch (instruction) {
+            case "do()" -> this.enabled = true;
+            case "don't()" -> this.enabled = false;
+            case String _ when this.enabled -> {return Optional.of(instruction);}
+            default -> {}
         }
         return Optional.empty();
     }

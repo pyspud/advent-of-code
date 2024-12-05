@@ -16,10 +16,5 @@ public class MemorySegment {
 
     Stream<String> getInstructions() {
         return this.matches.results().map(MatchResult::group);
-        // var actual = new ArrayList<String>();
-        // while (matches.find()) {
-        //     actual.add(matches.group());
-        // }
-        // return actual.stream();
     }
 }

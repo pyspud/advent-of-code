@@ -23,7 +23,7 @@ record WordSearch(List<String> puzzle) {
     }
 
     String wordInDirection(int l, int c, int lDelta, int cDelta) {
-        StringBuffer temp = new StringBuffer(4);
+        StringBuilder temp = new StringBuilder(4);
         for (int i = 0; i < 4; i++) {
             temp.append(letterAt(l + (i * lDelta), c + (i * cDelta)));
         }

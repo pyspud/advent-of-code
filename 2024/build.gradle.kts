@@ -9,7 +9,7 @@ repositories {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(23)
     }
 }
 
@@ -21,6 +21,16 @@ testing {
                 implementation.bundle(libs.bundles.junit)
             }
             useJUnitJupiter()
+            targets {
+                all {
+                    testTask.configure {
+                        testLogging {
+                            exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+                            showStandardStreams = true
+                        }
+                    }
+                }
+            }
         }
     }
 }

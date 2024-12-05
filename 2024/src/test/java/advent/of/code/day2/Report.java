@@ -59,7 +59,7 @@ record Report(long[] levels) {
         }
 
         return IntStream.range(0, levels.length)
-                .mapToObj(i -> copyArrayWithout(i))
+                .mapToObj(this::copyArrayWithout)
                 .map(Report::new)
                 .anyMatch(Report::isSafe);
     }
